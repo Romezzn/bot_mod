@@ -4,6 +4,9 @@ from discord import app_commands, Embed, Interaction
 import os
 import json
 from dotenv import load_dotenv
+import asyncio
+import gc  # Importar el recolector de basura para liberar memoria
+
 
 # Cargar token desde .env
 load_dotenv()
@@ -27,10 +30,27 @@ AUDIO_CHANNEL = 1309521466106052659
 URL_CHANNEL = 1309542661526388756
 LOG_CHANNEL = 1312752312569036860  # Canal para registrar las acciones del bot
 
+# Función para purgar la memoria
+async def purge_memory():
+    while True:
+        await asyncio.sleep(8 * 3600)  # Esperar 8 horas (en segundos)
+        print("Iniciando purga de memoria...")
+
+        # Realizar recolección de basura manualmente
+        gc.collect()
+
+        # Aquí podrías agregar cualquier otro tipo de limpieza que quieras realizar
+        print("Purgada de memoria realizada.")
+
+# En la función on_ready() o donde inicializas el bot, agregar la tarea de purga
 @bot.event
 async def on_ready():
     print(f"Bot conectado como {bot.user}.")
     print(f"ID: {bot.user.id}")
+
+    # Iniciar la tarea de purga
+    bot.loop.create_task(purge_memory())  # Crear la tarea que se ejecutará periódicamente
+
 
 
 @bot.event
